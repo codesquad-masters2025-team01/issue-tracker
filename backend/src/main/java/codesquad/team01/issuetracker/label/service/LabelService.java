@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import codesquad.team01.issuetracker.common.exception.DuplicateLabelName;
+import codesquad.team01.issuetracker.common.exception.LabelNotFoundException;
 import codesquad.team01.issuetracker.label.domain.Label;
 import codesquad.team01.issuetracker.label.dto.LabelDto;
 import codesquad.team01.issuetracker.label.repository.LabelRepository;
@@ -54,5 +55,23 @@ public class LabelService {
 		Label savedLabel = labelRepository.save(entity);
 
 		return LabelDto.LabelCreateResponse.from(savedLabel);
+	}
+
+	@Transactional
+	public LabelDto.LabelUpdateResponse updateLabel(int id, LabelDto.LabelUpdateRequest request) {
+		String newName = request.name();
+
+		Label updateTarget = labelRepository.findById(id)
+			.orElseThrow(() -> new LabelNotFoundException(newName));
+
+		// newName 과 동일한 이름을 가진 값 중에 id 가 다른 값이 있는지 확인 (중복확인)
+		if (labelRepository.existsByNameAndIdNot(newName, id)) {
+			throw new DuplicateLabelName(newName);
+		}
+
+		updateTarget.update(newName, request.description(), request.color(), request.textColor());
+		Label saved = labelRepository.save(updateTarget);
+
+		return LabelDto.LabelUpdateResponse.from(saved);
 	}
 }
