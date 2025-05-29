@@ -24,6 +24,8 @@ public interface LabelRepository extends CrudRepository<Label, Integer>, LabelQu
 
 	boolean existsByName(String name);
 
+	boolean existsById(int id);
+
 	Optional<Label> findById(int id);
 
 	// name 같고 id 다른 레코드가 있으면 true 반환
