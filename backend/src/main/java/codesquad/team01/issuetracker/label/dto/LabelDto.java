@@ -139,8 +139,6 @@ public class LabelDto {
 
 	// 레이블 수정 요청 dto
 	public record LabelUpdateRequest(
-		int id,
-
 		@NotBlank(message = "Label 이름은 필수입니다.")
 		@Size(max = 100, message = "Label 이름은 최대 100자 이내여야 합니다.")
 		String name,
