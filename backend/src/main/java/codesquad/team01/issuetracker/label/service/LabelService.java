@@ -62,7 +62,7 @@ public class LabelService {
 		String newName = request.name();
 
 		Label updateTarget = labelRepository.findById(id)
-			.orElseThrow(() -> new LabelNotFoundException(newName));
+			.orElseThrow(() -> new LabelNotFoundException(id));
 
 		// newName 과 동일한 이름을 가진 값 중에 id 가 다른 값이 있는지 확인 (중복확인)
 		if (labelRepository.existsByNameAndIdNot(newName, id)) {
@@ -73,5 +73,14 @@ public class LabelService {
 		Label saved = labelRepository.save(updateTarget);
 
 		return LabelDto.LabelUpdateResponse.from(saved);
+	}
+
+	@Transactional
+	public void deleteLabel(int id) {
+		Label targetLabel = labelRepository.findById(id)
+			.orElseThrow(() -> new LabelNotFoundException(id));
+
+		targetLabel.delete();
+		labelRepository.save(targetLabel);
 	}
 }
