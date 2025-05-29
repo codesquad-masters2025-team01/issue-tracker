@@ -5,7 +5,7 @@ public class DuplicateLabelName extends RuntimeException {
 	private final String labelName;
 
 	public DuplicateLabelName(String labelName) {
-		super("중복된 레이블 이름 : " + labelName);
+		super(labelName);
 		this.labelName = labelName;
 	}
 

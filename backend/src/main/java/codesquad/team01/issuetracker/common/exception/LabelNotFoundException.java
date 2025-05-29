@@ -2,10 +2,14 @@ package codesquad.team01.issuetracker.common.exception;
 
 public class LabelNotFoundException extends RuntimeException {
 
-	private final String name;
+	private final String labelName;
 
-	public LabelNotFoundException(String name) {
-		super("'" + name + "' 레이블을 찾을 수 없습니다.");
-		this.name = name;
+	public LabelNotFoundException(String labelName) {
+		super(labelName);
+		this.labelName = labelName;
+	}
+
+	public String getLabelName() {
+		return labelName;
 	}
 }
