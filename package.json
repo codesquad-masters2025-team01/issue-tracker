@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "date-fns": "^4.1.0",
+    "react-infinite-scroll-component": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/react-infinite-scroll-component": "^4.2.5"
+  }
+}

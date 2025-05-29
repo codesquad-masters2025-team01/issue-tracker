@@ -1,0 +1,23 @@
+{
+  "success": true,
+  "data": {
+    "totalCount": 5,
+    "labels": [
+      {
+        "id": 1,
+        "name": "epic:1",
+        "color": "#0075ca"
+      },
+      {
+        "id": 2,
+        "name": "epic:2",
+        "color": "#0075ca"
+      },
+      {
+        "id": 3,
+        "name": "epic:3",
+        "color": "#0075ca"
+      }
+    ]
+  }
+}
