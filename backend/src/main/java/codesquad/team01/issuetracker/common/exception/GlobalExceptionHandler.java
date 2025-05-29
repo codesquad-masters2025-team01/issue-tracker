@@ -41,14 +41,14 @@ public class GlobalExceptionHandler {
 			.badRequest()
 			.body(ApiResponse.error("레이블 이름 '" + labelName + "'은(는) 이미 존재합니다."));
 	}
-	
+
 	// 레이블을 찾을 수 없을 때
 	@ExceptionHandler(LabelNotFoundException.class)
 	public ResponseEntity<ApiResponse<?>> handleLabelNotFound(LabelNotFoundException e) {
-		String labelName = e.getLabelName();
+		int id = e.getId();
 		return ResponseEntity
 			.badRequest()
-			.body(ApiResponse.error("레이블 '" + labelName + "' 을(를) 찾을 수 없습니다."));
+			.body(ApiResponse.error("레이블 '" + id + "' 을(를) 찾을 수 없습니다."));
 	}
 
 	@ExceptionHandler(Exception.class)
