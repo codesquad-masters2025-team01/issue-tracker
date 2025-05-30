@@ -2,11 +2,13 @@ package codesquad.team01.issuetracker.auth.api;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,11 +18,13 @@ import codesquad.team01.issuetracker.auth.service.TokenService;
 import codesquad.team01.issuetracker.auth.util.AuthorizationUrlBuilder;
 import codesquad.team01.issuetracker.common.dto.ApiResponse;
 import codesquad.team01.issuetracker.user.domain.User;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@RequestMapping("/api")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -76,4 +80,17 @@ public class AuthController {
 
 		return ApiResponse.success(tokens);
 	}
+
+	// 인증한 사용자 username, profileImageUrl
+	@GetMapping("/v1/auth/me")
+	public ApiResponse<?> getUsernameAndProfileImage(HttpServletRequest request) {
+		String username = (String)request.getAttribute("username");
+		String profileImage = (String)request.getAttribute("profileImageUrl");
+
+		return ApiResponse.success(Map.of(
+			"username", username,
+			"profileImage", profileImage
+		));
+	}
+
 }
