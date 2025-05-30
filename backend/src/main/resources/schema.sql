@@ -129,6 +129,6 @@ ALTER TABLE `issue_label`
 
 CREATE TABLE IF NOT EXISTS `refresh_token` (
       `id` INTEGER AUTO_INCREMENT PRIMARY KEY,
-      `user_id` INT UNIQUE,
+      `user_id` INT UNIQUE NOT NULL,
       `token` VARCHAR(1024) NOT NULL
 );
