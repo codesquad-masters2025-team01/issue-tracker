@@ -28,14 +28,16 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 		HttpServletResponse response,
 		FilterChain chain)
 		throws ServletException, IOException {
-
 		try {
+			//토큰 존재여부 판단과 같은 JwtException에 대한 필터링 기능 추가 필요
+
 			chain.doFilter(request, response);
+
 		} catch (JwtException e) {
-			log.warn("JWT 검증 실패: {}", e.getMessage());
+			log.warn("JWT 검증이 실패하였습니다: {}", e.getMessage());
 			writeErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
 		} catch (TokenNotFoundException e) {
-			log.debug("토큰 없음: {}", e.getMessage());
+			log.debug("토큰이 없습니다: {}", e.getMessage());
 			writeErrorResponse(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		}
 	}

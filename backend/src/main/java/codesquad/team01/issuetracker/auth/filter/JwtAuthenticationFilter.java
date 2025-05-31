@@ -41,28 +41,23 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		log.info("JWT 필터 동작: {}", path);
 
 		// OPTIONS 요청 시(CORS에 관련) 다음 필터로 넘김
-		if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-			chain.doFilter(request, response);
-			return;
-		}
+		//if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+		//	chain.doFilter(request, response);
+		//	return;
+		//}
 
-		//토큰 추출 (없으면 TokenNotFoundException)
 		String token = JwtExtractor.extractJwt(request);
 		log.info("Access Token:{}", token);
 
-		//토큰 파싱·검증 (서명, 만료 체크)
 		Claims claims = jwtManager.parseClaims(token);
 
-		//subject(userId) 및 클레임 꺼내기
 		Integer userId = Integer.valueOf(claims.getSubject());
 		String username = claims.get("username", String.class);
 		String profileImageUrl = claims.get("profileImageUrl", String.class);
 
-		//DB 에서 실제 User 조회
 		User user = userRepository.findById(userId)
 			.orElseThrow(UserNotFoundException::new);
 
-		//인증 정보 request 에 세팅
 		request.setAttribute("authenticatedUser", user);
 		request.setAttribute("username", username);
 		request.setAttribute("profileImageUrl", profileImageUrl);
