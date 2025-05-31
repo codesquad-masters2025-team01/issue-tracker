@@ -50,14 +50,14 @@ public class GlobalExceptionHandler {
 	//아이디가 존재하지 않는 경우
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<ApiResponse<?>> handleUserNotFound(UserNotFoundException e) {
-		log.error("UserNotFoundException : {}", e.getMessage());
+		log.info("UserNotFoundException : {}", e.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("존재하지 않는 ID 입니다"));
 	}
 
 	//패스워드가 틀린 경우
 	@ExceptionHandler(InvalidPasswordException.class)
 	public ResponseEntity<ApiResponse<?>> handleInvalidPassword(InvalidPasswordException e) {
-		log.error("InvalidPasswordException : {}", e.getMessage());
+		log.info("InvalidPasswordException : {}", e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("비밀번호가 일치하지 않습니다"));
 	}
 
