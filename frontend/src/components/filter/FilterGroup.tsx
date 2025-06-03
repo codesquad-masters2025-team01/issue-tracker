@@ -26,24 +26,6 @@ const Dropdown = styled.div`
   }
 `;
 
-// const Dropdown = styled.div<{ width?: string }>`
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   padding: 0.5rem; /* 8px */
-//   font-size: 1rem;
-//   border: ${({ theme }) =>
-//     `${theme.border.default} ${theme.colors.border.default}`};
-//   border-radius: ${({ theme }) => theme.radius.medium};
-//   background-color: ${({ theme }) => theme.colors.surface.strong};
-//   cursor: pointer;
-//   transition: opacity 0.2s;
-//   /width: ${({ width }) => width ?? "auto"};
-//   &:hover {
-//     opacity: ${({ theme }) => theme.opacity.hover};
-//   }
-// `;
-
 const LabelText = styled.span`
   font-size: 1rem;
   /* 여기에서 레이블 텍스트에 적용할 CSS를 추가하세요 */

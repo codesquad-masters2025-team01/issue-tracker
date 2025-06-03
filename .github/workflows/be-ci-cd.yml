@@ -1,0 +1,151 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [ release ]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [ release ]
+    paths:
+      - 'backend/**'
+
+jobs:
+#  test:
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Set up JDK 21
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '21'
+#          distribution: 'temurin'
+#
+#      - name: Cache Gradle packages
+#        uses: actions/cache@v3
+#        with:
+#          path: |
+#            ~/.gradle/caches
+#            ~/.gradle/wrapper
+#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+#          restore-keys: |
+#            ${{ runner.os }}-gradle-
+#
+#      - name: Grant execute permission for gradlew
+#        run: chmod +x backend/gradlew
+#
+#      - name: Run tests
+#        run: |
+#          cd backend
+#          ./gradlew test
+#
+#      - name: Build with Gradle
+#        run: |
+#          cd backend
+#          ./gradlew bootJar
+
+  deploy:
+#    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/release'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x backend/gradlew
+
+      - name: Build JAR
+        run: |
+          cd backend
+          ./gradlew bootJar
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # 모든 환경변수 설정 # 추후 변경 필요
+            export DB_USERNAME="${{ secrets.DB_USERNAME }}"
+            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            export OAUTH_GITHUB_CLIENT_ID="${{ secrets.OAUTH_GITHUB_CLIENT_ID }}"
+            export OAUTH_GITHUB_CLIENT_SECRET="${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}"
+            export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export OAUTH_GITHUB_REDIRECT_URI="https://issue-tracker.o-r.kr/api/v1/oauth/callback"
+
+            # 애플리케이션 중지
+            sudo systemctl stop issue-tracker || pkill -f "java.*backend" || true
+
+            # 백업 생성
+            cd ~/issue-tracker
+            if [ -f backend/build/libs/backend-0.0.1-SNAPSHOT.jar ]; then
+              cp backend/build/libs/backend-0.0.1-SNAPSHOT.jar backend/build/libs/backend-backup.jar
+            fi
+
+            # 최신 코드 가져오기
+            git pull origin release
+
+            cd backend
+            chmod +x gradlew
+
+            # sudo -E로 환경변수 보존하면서 테스트 및 빌드
+            sudo -E ./gradlew clean test
+            sudo -E ./gradlew bootJar
+
+            # Systemd 서비스 시작 (서비스 파일의 환경변수 사용)
+            sudo systemctl start issue-tracker
+
+            # 헬스 체크
+            sleep 10
+            curl -f http://localhost:8080/api/v1/issues || exit 1
+
+            echo "Deployment completed successfully!"
+
+      - name: Slack Notification on Success
+        uses: 8398a7/action-slack@v3
+        if: success()
+        with:
+          status: success
+          channel: '#2025-팀프로젝트-1조'
+          text: |
+            ☀️ 백엔드 배포 성공! ️
+            • 브랜치: ${{ github.ref_name }}
+            • 커밋: ${{ github.event.head_commit.message }}
+            • 작성자: ${{ github.actor }}
+            • 시간: ${{ github.event.head_commit.timestamp }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Slack Notification on Failure
+        uses: 8398a7/action-slack@v3
+        if: failure()
+        with:
+          status: failure
+          channel: '#2025-팀프로젝트-1조'
+          text: |
+            ⛈️ 백엔드 배포 실패! 💩
+            • 브랜치: ${{ github.ref_name }}
+            • 작성자: ${{ github.actor }}
+            • 로그 확인: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

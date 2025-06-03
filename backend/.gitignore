@@ -37,12 +37,7 @@ out/
 .vscode/
 
 # Spring Boot config files (all profiles)
-application*.properties
-application*.yml
-application*.yaml
-*.properties
-*.yml
-*.yaml
+/src/main/resources/properties/env.properties
 
 .DS_Store
 ._.DS_Store

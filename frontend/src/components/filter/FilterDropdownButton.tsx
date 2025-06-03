@@ -57,7 +57,10 @@ export default function FilterDropdownButton({
   const [open, setOpen] = useState(false);
   const btnRef = useRef<HTMLDivElement>(null);
 
-  /* ① 바깥 클릭 시 닫기 ------------------------------------------- */
+  /* 🔹 1) 선택된 옵션 라벨 구하기 ------------------------------- */
+  const selectedOption = options.find((o) => o.id === selectedId);
+
+  /* 🔹 2) 바깥 클릭 시 닫기 ------------------------------------ */
   useEffect(() => {
     if (!open) return;
     const handleClick = (e: MouseEvent) => {
@@ -67,17 +70,29 @@ export default function FilterDropdownButton({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
-  /* ② 선택 처리 ---------------------------------------------------- */
+  /* 선택 처리 ---------------------------------------------------- */
   const handleOptionSelect = (id: string) => {
     onSelect(id);
     setOpen(false);
   };
 
+  /* 🔹 3) 버튼에 보여줄 텍스트 & 강조 여부 ---------------------- */
+  const displayLabel = selectedOption
+    ? `${title}: ${selectedOption.label}` // 예: '레이블: bug'
+    : title;
+
+  const isActive = !!selectedOption;
+
   return (
     <RelativeContainer ref={btnRef}>
       <IndicatorDropdown
-        label={title}
+        label={displayLabel}
         hasDownIcon
+        css={{
+          color: isActive ? "#0969da" : undefined, // 예시
+          fontWeight: isActive ? 600 : undefined, // 예시
+          background: isActive ? "rgba(0,0,0,0.03)" : "none", // 예시
+        }}
         onClick={() => setOpen((prev) => !prev)}
       />
 

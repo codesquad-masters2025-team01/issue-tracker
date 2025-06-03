@@ -3,16 +3,26 @@
 
 import { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-import Button from "@components/issue/Button";
-import { FilterGroup, FilterDropdown } from "@components/filter/FilterGroup";
-import IssueListComponent from "@components/issue/IssueList";
-import type { Issue } from "@/types/issue";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import useSyncFilters from "@/hooks/useSyncFilters";
+import { useIssuesInfinite } from "@/hooks/useIssuesInfinite";
+import { fetchFilterOptions } from "@/app/api/filters";
+import {
+  useSelectedFilters,
+  useIssueFilterStore,
+} from "@/stores/useIssueFilterStore";
+
+import IssueList from "@components/issue/IssueList";
+import Button from "@components/issue/Button";
+import { FilterGroup, FilterDropdown } from "@components/filter/FilterGroup";
+
+import type { FilterOptions } from "@/types/filter";
+
 const Page = styled.div`
   display: flex;
-  height: 105vh;
+  min-height: 87.5vh;
   flex-direction: column;
   padding: 1rem 5rem 5rem 5rem;
   background-color: ${({ theme }) => theme.colors.surface.default};
@@ -20,7 +30,6 @@ const Page = styled.div`
 
 const Toolbar = styled.div`
   display: flex;
-  height: 105vh;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
@@ -69,142 +78,43 @@ const MileStoneMoveBtn = styled(FilterDropdown)`
 `;
 
 export default function IssuesPage() {
-  const [issues, setIssues] = useState<Issue[]>([]);
+  /** 1) URL ↔ Zustand 동기화  */
+  useSyncFilters();
 
-  // 무한 스크롤에 필요한 상태 관리
-  const [cursor, setCursor] = useState<string | null>(null);
-  const [hasNext, setHasNext] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(false);
+  /** 2) 이슈 ‧ 카운트 쿼리  */
+  const { issuesQuery, countQuery } = useIssuesInfinite();
 
-  // 열린 이슈, 닫힌 이슈 개수(이슈 카운트) 상태 관리
-  const [issueCounts, setIssueCounts] = useState({ open: 0, closed: 0 });
+  /** 3) 필터 옵션 (레이블/마일스톤/사용자)  */
+  /* ① useState 제네릭 명시 */
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    label: [],
+    milestone: [],
+    assignee: [],
+    writer: [],
+  });
 
-  // 이슈 카운트 API 호출
-  const fetchIssueCounts = async () => {
-    try {
-      const res = await fetch("http://localhost:8080/api/v1/issues/count");
-      if (!res.ok) throw new Error("이슈 카운트 API 호출 실패");
-      const json = await res.json();
-      setIssueCounts(json.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // 필터에 대한 상태 관리
-  // const [popupType, setPopupType] = useState<
-  //   null | "assignee" | "label" | "milestone" | "writer"
-  // >(null);
-
-  // // 필터 옵션 상태
-  // const [filterOptions, setFilterOptions] = useState({
-  //   assignee: [],
-  //   label: [],
-  //   milestone: [],
-  //   writer: [],
-  // });
-
-  // // 선택된 필터 상태
-  // const [selectedFilters, setSelectedFilters] = useState({
-  //   assignee: undefined,
-  //   label: undefined,
-  //   milestone: undefined,
-  //   writer: undefined,
-  // });
-
-  // 필터 데이터 비동기 요청
-  // const fetchFilterOptions = async () => {
-  //   try {
-  //     const [labelRes, milestoneRes, userRes] = await Promise.all([
-  //       fetch("/api/v1/issue-metadata/labels"),
-  //       fetch("/api/v1/issue-metadata/milestones"),
-  //       fetch("/api/v1/issue-metadata/users"),
-  //     ]);
-
-  //     const [labelJson, milestoneJson, userJson] = await Promise.all([
-  //       labelRes.json(),
-  //       milestoneRes.json(),
-  //       userRes.json(),
-  //     ]);
-
-  //     const authors: { id: string; label: string }[] = [...new Set(issues.map((i) => i.writerName))].map(
-  //       (name, idx) => ({
-  //         id: String(idx + 1),
-  //         label: name,
-  //       })
-  //     );
-
-  //     setFilterOptions({
-  //       label: labelJson.data.labels.map((l) => ({
-  //         id: String(l.id),
-  //         label: l.name,
-  //         color: l.color,
-  //       })),
-  //       milestone: milestoneJson.data.milestones.map((m) => ({
-  //         id: String(m.id),
-  //         label: m.title,
-  //       })),
-  //       assignee: userJson.data.users.map((u) => ({
-  //         id: String(u.id),
-  //         label: u.username,
-  //         iconUrl: u.profileImageUrl,
-  //       })),
-  //       writer: authors,
-  //     });
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
-
-  // fetch("/api/v1/issues?state=open")
+  /* ② async/await 패턴 */
   useEffect(() => {
-    fetchIssueCounts();
-  }, []);
-
-  useEffect(() => {
-    fetchIssues();
-    // fetchMoreIssues();
-  }, []);
-
-  // mock 데이터를 사용하여 이슈 목록을 가져오는 함수 (삭제 예정)
-  const fetchIssues = async () => {
-    try {
-      const res = await fetch("/mockDatas/issueMockData.json");
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+    const loadOptions = async () => {
+      try {
+        const data = await fetchFilterOptions();
+        setFilterOptions(data);
+      } catch (err) {
+        console.error("필터 옵션 로딩 실패:", err);
       }
-      const json = await res.json();
-      const data = json.data.issues;
-      setIssues(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+    };
+    loadOptions();
+  }, []);
 
-  // 무한 스크롤을 위한 이슈 목록을 가져오는 함수
-  const fetchMoreIssues = async () => {
-    if (loading || !hasNext) return;
-    setLoading(true);
-    try {
-      const url = cursor
-        ? `http://localhost:8080/api/v1/issues?cursor=${cursor}`
-        : "http://localhost:8080/api/v1/issues";
-      const res = await fetch(url);
-      const result = await res.json();
-      const {
-        issues: newIssues,
-        cursor: { next, hasNext: nextExists },
-      } = result.data;
+  /* 4) 평탄화된 이슈 리스트 */
+  const flatIssues =
+    issuesQuery.data?.pages.flatMap((p) => p.data.issues) ?? [];
 
-      setIssues((prev) => [...prev, ...newIssues]);
-      setCursor(next);
-      setHasNext(nextExists);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  /* 5) 필터 초기화 버튼 기능 */
+  const selected = useSelectedFilters(); // ① 현재 적용된 필터
+  const resetFilters = useIssueFilterStore((s) => s.resetFilters);
+
+  const isFiltered = Object.keys(selected).length > 0; // true → 무엇이든 선택됨
 
   return (
     <Page>
@@ -223,7 +133,7 @@ export default function IssuesPage() {
           <FilterGroup>
             <Link href="/labels">
               <LabelMoveBtn
-                label={`레이블(${3})`}
+                label={`레이블(${filterOptions.label.length})`}
                 hasDownIcon={false}
                 onClick={() => {
                   /* 레이블 팝업 */
@@ -232,7 +142,7 @@ export default function IssuesPage() {
             </Link>
             <Link href="/milestones">
               <MileStoneMoveBtn
-                label={`마일스톤(${2})`}
+                label={`마일스톤(${filterOptions.milestone.length})`}
                 hasDownIcon={false}
                 onClick={() => {
                   /* 마일스톤 팝업 */
@@ -252,22 +162,27 @@ export default function IssuesPage() {
         </RightControls>
       </Toolbar>
 
+      {isFiltered && (
+        <Button css={{ marginLeft: "0.5rem" }} onClick={resetFilters}>
+          필터 지우기
+        </Button>
+      )}
+
       <InfiniteScroll
-        className="your-scroll-container" /* 스크롤 바 없애기 */
-        dataLength={issues.length}
-        next={fetchMoreIssues}
-        hasMore={hasNext}
-        loader={<h4 style={{ textAlign: "center" }}>로딩 중...</h4>}
+        dataLength={flatIssues.length}
+        next={issuesQuery.fetchNextPage}
+        hasMore={!!issuesQuery.hasNextPage}
+        loader={<h4 style={{ textAlign: "center" }}>로딩 중…</h4>}
         endMessage={
           <p style={{ textAlign: "center" }}>
             <b>모든 이슈를 불러왔습니다.</b>
           </p>
         }
       >
-        <IssueListComponent
-          issues={issues}
-          openCount={issueCounts.open}
-          closeCount={issueCounts.closed}
+        <IssueList
+          issues={flatIssues}
+          openCount={countQuery.data?.data.open ?? 0}
+          closeCount={countQuery.data?.data.closed ?? 0}
         />
       </InfiniteScroll>
     </Page>

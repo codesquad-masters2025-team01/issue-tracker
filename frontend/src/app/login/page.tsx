@@ -6,8 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useThemeStore } from "@/stores/useThemeStore";
 import styled from "@emotion/styled";
-import theme from "@/styles/theme";
 import ThemeToggleBtn from "@components/theme/ThemeToggleBtn";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { apiFetch } from "@/hooks/useApiLoginFetch";
 
 const Container = styled.div`
   display: flex;
@@ -113,8 +117,51 @@ const SignupLink = styled(Link)`
 export default function LoginPage() {
   const isDarkMode = useThemeStore((state) => state.isDark);
 
+  // Oauth 관련 상태와 함수
   const handleGitHubLogin = () => {
     window.location.href = "http://localhost:8080/api/v1/oauth/github/login";
+    // window.location.href = "/api/v1/oauth/github/login";
+  };
+
+  // 일반 로그인 관련 상태와 함수
+  const router = useRouter();
+  const { setAccessToken } = useAuthStore();
+
+  const [loginId, setLoginId] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      /** 백엔드 응답 형태
+       * { success:true, data:{ accessToken:"..." } }
+       */
+      const { data } = await apiFetch<{ data: { accessToken: string } }>(
+        "/auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ loginId, password }),
+        }
+      );
+
+      // ① 메모리(전역 상태)에 저장
+      setAccessToken(data.accessToken);
+      // ② 새로고침 후에도 유지하려면 (선택)
+      localStorage.setItem("accessToken", data.accessToken);
+
+      router.replace("/issues"); // 메인으로 이동
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert("로그인 실패");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -147,10 +194,25 @@ export default function LoginPage() {
         <span>or</span>
       </Divider>
 
-      <Form>
-        <TextInput type="text" placeholder="아이디" />
-        <TextInput type="password" placeholder="비밀번호" />
-        <LoginButton>아이디로 로그인</LoginButton>
+      <Form onSubmit={onSubmit}>
+        <TextInput
+          type="text"
+          placeholder="아이디"
+          value={loginId}
+          onChange={(e) => setLoginId(e.target.value)}
+          required
+          className="input"
+        />
+        <TextInput
+          type="password"
+          placeholder="비밀번호"
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          className="input"
+        />
+        <LoginButton disabled={loading}>
+          {loading ? "로그인 중…" : "아이디로 로그인"}
+        </LoginButton>
       </Form>
 
       <SignupLink href="/signup">회원가입</SignupLink>

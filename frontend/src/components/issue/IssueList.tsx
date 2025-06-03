@@ -34,10 +34,22 @@ const IssueList: React.FC<IssueListProps> = ({
     <IssueListHeader
       openCount={openCount}
       closeCount={closeCount}
-      selected="open"
+      tab="open"
       onChangeTab={() => {}}
     />
     <ListContainer>
+      {issues.length === 0 ? (
+        <div
+          css={{
+            padding: "2rem",
+            textAlign: "center",
+            height: "50vh",
+            // color: ({ theme }) => theme.colors.neutralText.default,
+          }}
+        >
+          No issues found.
+        </div>
+      ) : null}
       {issues.map((issue) => (
         <Link
           key={issue.id}

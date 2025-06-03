@@ -40,3 +40,5 @@ export const useIssueFilterStore = create<FilterStore>()(
     { name: "issue-filter-storage" } // 로컬스토리지에 유지
   )
 );
+
+export const useSelectedFilters = () => useIssueFilterStore((s) => s.selected);

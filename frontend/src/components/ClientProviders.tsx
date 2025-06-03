@@ -3,7 +3,7 @@
 "use client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, Suspense, useState } from "react";
 
 import EmotionProvider from "../styles/emotionProvider";
 import ThemeProvider from "@components/theme/ThemeProvider";
@@ -17,14 +17,16 @@ export default function ClientProviders({
   const [client] = useState(() => new QueryClient());
 
   return (
-    <QueryClientProvider client={client}>
-      <EmotionProvider>
-        <ThemeProvider>
-          <GlobalStyles />
-          {children}
-          {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
-        </ThemeProvider>
-      </EmotionProvider>
-    </QueryClientProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <QueryClientProvider client={client}>
+        <EmotionProvider>
+          <ThemeProvider>
+            <GlobalStyles />
+            {children}
+            {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
+          </ThemeProvider>
+        </EmotionProvider>
+      </QueryClientProvider>
+    </Suspense>
   );
 }
