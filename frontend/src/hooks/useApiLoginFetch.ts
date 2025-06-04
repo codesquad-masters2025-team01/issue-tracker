@@ -1,8 +1,8 @@
 // src/libs/apiFetch.ts
 import { useAuthStore } from "@/stores/useAuthStore";
 
-const BASE_URL = "https://localhost:8080/api/v1";
-// const BASE_URL = "/api/v1";
+// const BASE_URL = "https://localhost:8080/api/v1";
+const BASE_URL = "/api/v1";
 
 export async function apiFetch<T>(
   input: RequestInfo,
