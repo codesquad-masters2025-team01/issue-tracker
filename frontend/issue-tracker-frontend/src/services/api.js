@@ -1,9 +1,12 @@
 // src/services/api.js
 import axios from 'axios'
 
-// 임시로 직접 연결 (CORS 해결 후 프록시로 변경 예정)
-const BASE_URL = 'http://localhost:8080/api/v1'
-const BACKEND_URL = 'http://localhost:8080/api/v1'  // OAuth용
+// Nginx 리버스 프록시 환경에서는 모든 요청이 같은 도메인으로 감
+// 로컬 개발환경에서만 프록시 사용
+const isDevelopment = window.location.hostname === 'localhost'
+const BASE_URL = '/api/v1'  // 모든 환경에서 동일 (Nginx가 프록시 처리)
+
+console.log('API 환경:', isDevelopment ? '개발(로컬)' : '운영(Nginx 프록시)', 'BASE_URL:', BASE_URL)
 
 // axios 인스턴스 생성
 const api = axios.create({
@@ -42,7 +45,8 @@ api.interceptors.response.use(
 export const authApi = {
   // GitHub 로그인 URL 리다이렉트
   githubLogin() {
-    window.location.href = `${BACKEND_URL}/oauth/github/login`  // 직접 백엔드 URL 사용
+    // Nginx가 /api/를 프록시하므로 상대 경로 사용
+    window.location.href = `${BASE_URL}/oauth/github/login`
   },
   
   // 일반 로그인
@@ -114,6 +118,7 @@ export const commentApi = {
     return api.delete(`/comments/${commentId}`)
   }
 }
+
 // 레이블 API 추가
 export const labelFilterApi = {
   getLabels: () => api.get('/labels/filters'),
