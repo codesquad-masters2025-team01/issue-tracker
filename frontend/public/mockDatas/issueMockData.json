@@ -1,0 +1,340 @@
+{
+  "statusCode": 200,
+  "data": {
+    "totalCount": 10,
+    "issues": [
+      {
+        "id": 32,
+        "title": "32 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 2,
+          "username": "b",
+          "profileImageUrl": "https://example.com/profile/b.jpg"
+        },
+        "milestone": {
+          "id": 8,
+          "title": "그룹 프로젝트 - h project"
+        },
+        "assignees": [
+          {
+            "id": 11,
+            "username": "k",
+            "profileImageUrl": "https://example.com/profile/k.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 11,
+            "name": "k label",
+            "color": "#ff5722",
+            "textColor": "white"
+          }
+        ]
+      },
+      {
+        "id": 30,
+        "title": "30 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 4,
+          "username": "d",
+          "profileImageUrl": "https://example.com/profile/d.jpg"
+        },
+        "milestone": {
+          "id": 7,
+          "title": "그룹 프로젝트 - g project"
+        },
+        "assignees": [
+          {
+            "id": 6,
+            "username": "f",
+            "profileImageUrl": "https://example.com/profile/f.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 6,
+            "name": "f label",
+            "color": "#2196f3",
+            "textColor": "white"
+          }
+        ]
+      },
+      {
+        "id": 28,
+        "title": "28 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 1,
+          "username": "a",
+          "profileImageUrl": "https://example.com/profile/a.jpg"
+        },
+        "milestone": {
+          "id": 9,
+          "title": "그룹 프로젝트 - i project"
+        },
+        "assignees": [
+          {
+            "id": 10,
+            "username": "j",
+            "profileImageUrl": "https://example.com/profile/j.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 10,
+            "name": "j label",
+            "color": "#8bc34a",
+            "textColor": "white"
+          }
+        ]
+      },
+      {
+        "id": 26,
+        "title": "26 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 3,
+          "username": "c",
+          "profileImageUrl": "https://example.com/profile/c.jpg"
+        },
+        "milestone": {
+          "id": 11,
+          "title": "그룹 프로젝트 - k project"
+        },
+        "assignees": [
+          {
+            "id": 9,
+            "username": "i",
+            "profileImageUrl": "https://example.com/profile/i.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 9,
+            "name": "i label",
+            "color": "#00bcd4",
+            "textColor": "black"
+          }
+        ]
+      },
+      {
+        "id": 24,
+        "title": "24 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 5,
+          "username": "e",
+          "profileImageUrl": "https://example.com/profile/e.jpg"
+        },
+        "milestone": {
+          "id": 1,
+          "title": "그룹 프로젝트 - a project"
+        },
+        "assignees": [
+          {
+            "id": 6,
+            "username": "f",
+            "profileImageUrl": "https://example.com/profile/f.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 6,
+            "name": "f label",
+            "color": "#2196f3",
+            "textColor": "white"
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "title": "22 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 6,
+          "username": "f",
+          "profileImageUrl": "https://example.com/profile/f.jpg"
+        },
+        "milestone": {
+          "id": 5,
+          "title": "그룹 프로젝트 - e project"
+        },
+        "assignees": [
+          {
+            "id": 1,
+            "username": "a",
+            "profileImageUrl": "https://example.com/profile/a.jpg"
+          },
+          {
+            "id": 9,
+            "username": "i",
+            "profileImageUrl": "https://example.com/profile/i.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 1,
+            "name": "a label",
+            "color": "#0075ca",
+            "textColor": "white"
+          },
+          {
+            "id": 9,
+            "name": "i label",
+            "color": "#00bcd4",
+            "textColor": "black"
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "title": "20 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 9,
+          "username": "i",
+          "profileImageUrl": "https://example.com/profile/i.jpg"
+        },
+        "milestone": {
+          "id": 3,
+          "title": "그룹 프로젝트 - c project"
+        },
+        "assignees": [
+          {
+            "id": 1,
+            "username": "a",
+            "profileImageUrl": "https://example.com/profile/a.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 1,
+            "name": "a label",
+            "color": "#0075ca",
+            "textColor": "white"
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "title": "18 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 7,
+          "username": "g",
+          "profileImageUrl": "https://example.com/profile/g.jpg"
+        },
+        "milestone": {
+          "id": 1,
+          "title": "그룹 프로젝트 - a project"
+        },
+        "assignees": [
+          {
+            "id": 8,
+            "username": "h",
+            "profileImageUrl": "https://example.com/profile/h.jpg"
+          },
+          {
+            "id": 11,
+            "username": "k",
+            "profileImageUrl": "https://example.com/profile/k.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 8,
+            "name": "h label",
+            "color": "#9c27b0",
+            "textColor": "white"
+          },
+          {
+            "id": 11,
+            "name": "k label",
+            "color": "#ff5722",
+            "textColor": "white"
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "title": "16 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 10,
+          "username": "j",
+          "profileImageUrl": "https://example.com/profile/j.jpg"
+        },
+        "milestone": {
+          "id": 11,
+          "title": "그룹 프로젝트 - k project"
+        },
+        "assignees": [
+          {
+            "id": 5,
+            "username": "e",
+            "profileImageUrl": "https://example.com/profile/e.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 5,
+            "name": "e label",
+            "color": "#f44336",
+            "textColor": "white"
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "14 issue",
+        "isOpen": false,
+        "createdAt": "2025-05-15T21:40:10",
+        "updatedAt": "2025-05-15T21:40:10",
+        "writer": {
+          "id": 8,
+          "username": "h",
+          "profileImageUrl": "https://example.com/profile/h.jpg"
+        },
+        "milestone": {
+          "id": 9,
+          "title": "그룹 프로젝트 - i project"
+        },
+        "assignees": [
+          {
+            "id": 4,
+            "username": "d",
+            "profileImageUrl": "https://example.com/profile/d.jpg"
+          }
+        ],
+        "labels": [
+          {
+            "id": 12,
+            "name": "l label",
+            "color": "#795548",
+            "textColor": "white"
+          }
+        ]
+      }
+    ]
+  }
+}

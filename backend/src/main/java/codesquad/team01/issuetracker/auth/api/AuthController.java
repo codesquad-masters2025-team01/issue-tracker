@@ -24,9 +24,9 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@RestController
 public class AuthController {
 
 	private final AuthService authService;

@@ -1,0 +1,23 @@
+{
+  "statusCode": 200,
+  "data": {
+    "totalCount": 5,
+    "users": [
+      {
+        "id": 1,
+        "username": "b",
+        "profileImageUrl": "profile image url"
+      },
+      {
+        "id": 2,
+        "username": "b",
+        "profileImageUrl": "profile image url"
+      },
+      {
+        "id": 3,
+        "username": "b",
+        "profileImageUrl": "profile image url"
+      }
+    ]
+  }
+}
