@@ -39,7 +39,7 @@ github:
     token-uri: https://github.com/login/oauth/access_token
     user-info-uri: https://api.github.com/user
     user-email-uri: https://api.github.com/user/emails
-    redirect-uri: https://issue-tracker.o-r.kr/oauth/callback
+    redirect-uri: https://issue-tracker.o-r.kr/api/v1/oauth/callback
     scope: read:user user:email
 
 jwt:
