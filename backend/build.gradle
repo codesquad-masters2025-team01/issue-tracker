@@ -50,8 +50,7 @@ dependencies {
 
 
     // 로깅
-    implementation 'ch.qos.logback:logback-classic:1.4.11'
-    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'ch.qos.logback:logback-classic'
 
 
     // Spring Security 암호화 (PasswordEncoder 등)
