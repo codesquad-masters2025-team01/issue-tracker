@@ -48,8 +48,8 @@ public class AuthController {
 
 	// Redirect(Callback) endpoint
 	@GetMapping("/v1/oauth/callback")
-	public AuthDto.LoginResponse githubCallback(@RequestParam("code") String code, @RequestParam("state") String state,
-		HttpSession session) {
+	public void githubCallback(@RequestParam("code") String code, @RequestParam("state") String state,
+		HttpSession session, HttpServletResponse response) throws IOException {
 		String savedState = (String)session.getAttribute("oauth_state");
 		if (savedState == null || !savedState.equals(state)) {
 			throw new IllegalStateException("유효하지 않은 state");
@@ -61,7 +61,14 @@ public class AuthController {
 		AuthDto.LoginResponse tokens = tokenService.createTokens(oauthUser.getId(), oauthUser.getProfileImageUrl(),
 			oauthUser.getUsername());
 
-		return tokens;
+		// 프론트엔드로 토큰과 함께 리다이렉트
+		String frontendUrl = String.format(
+			"http://localhost:5173/login?accessToken=%s&refreshToken=%s&success=true",
+			tokens.accessToken(),
+			tokens.refreshToken()
+		);
+
+		response.sendRedirect(frontendUrl);
 	}
 
 	//자체 로그인

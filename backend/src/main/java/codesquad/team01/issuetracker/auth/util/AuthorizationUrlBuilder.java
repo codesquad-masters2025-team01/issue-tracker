@@ -25,4 +25,17 @@ public class AuthorizationUrlBuilder {
 			.build()
 			.toUri();
 	}
+
+	// 깃헙로그인의 토큰을 프론트로 리다이렉트 하기 위한 uri 조립 후 반환
+	public URI buildFrontendRedirectUri(String accessToken, String refreshToken) {
+		// 프론트엔드 콜백 페이지 기본 URL (필요에 따라 변경하세요)
+		String frontendBase = "http://localhost:3000/oauth/callback";
+
+		return UriComponentsBuilder
+			.fromUriString(frontendBase)
+			.queryParam("accessToken", accessToken)
+			.queryParam("refreshToken", refreshToken)
+			.build()
+			.toUri();
+	}
 }
