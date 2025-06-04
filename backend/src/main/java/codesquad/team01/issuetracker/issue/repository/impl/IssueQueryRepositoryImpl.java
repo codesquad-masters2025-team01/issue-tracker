@@ -250,14 +250,14 @@ public class IssueQueryRepositoryImpl implements IssueQueryRepository {
 	}
 
 	@Override
-	public int batchUpdateIssueStates(List<Integer> issueIds, IssueState action, LocalDateTime now) {
+	public int batchUpdateIssueStates(List<Integer> issueIds, IssueState targetState, LocalDateTime now) {
 		if (issueIds.isEmpty()) {
 			return 0;
 		}
 
 		MapSqlParameterSource params = new MapSqlParameterSource();
 		params.addValue("issueIds", issueIds);
-		params.addValue("action", action.name());
+		params.addValue("state", targetState.name());
 		params.addValue("now", now);
 
 		return jdbcTemplate.update(UPDATE_ISSUE_STATES_BATCH_QUERY, params);
