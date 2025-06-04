@@ -63,7 +63,7 @@ public class AuthController {
 
 		// 프론트엔드로 토큰과 함께 리다이렉트
 		String frontendUrl = String.format(
-			"http://localhost:5173/login?accessToken=%s&refreshToken=%s&success=true",
+			"http://issue-tracker.o-r.kr/login?accessToken=%s&refreshToken=%s&success=true",
 			tokens.accessToken(),
 			tokens.refreshToken()
 		);
