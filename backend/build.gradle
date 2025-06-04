@@ -48,6 +48,8 @@ dependencies {
     implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.3'
     implementation 'software.amazon.awssdk:s3:2.20.162'
 
+    implementation 'ch.qos.logback:logback-classic:1.4.11'
+
     // Spring Security 암호화 (PasswordEncoder 등)
     implementation 'org.springframework.security:spring-security-crypto'
 
