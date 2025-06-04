@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ProfileMenu from "./ProfileMenu";
 
 export default function Profile() {
   return (
