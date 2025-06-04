@@ -1,7 +1,6 @@
 package codesquad.team01.issuetracker.common.domain;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -24,7 +23,7 @@ public abstract class BaseEntity {
 	}
 
 	public void delete() {
-		this.deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+		this.deletedAt = LocalDateTime.now();
 	}
 
 	public void restore() {

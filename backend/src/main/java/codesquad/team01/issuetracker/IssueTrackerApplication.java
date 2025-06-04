@@ -5,8 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import codesquad.team01.issuetracker.common.config.GithubOAuthProperties;
+import codesquad.team01.issuetracker.common.config.ImageUploadProperties;
 
-@EnableConfigurationProperties(GithubOAuthProperties.class)
+@EnableConfigurationProperties({GithubOAuthProperties.class, ImageUploadProperties.class})
 @SpringBootApplication
 public class IssueTrackerApplication {
 

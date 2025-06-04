@@ -19,17 +19,17 @@ public class TokenService {
 	private final UserAuthorizationJwtManager userAuthorizationJwtManager;
 	private final RefreshTokenRepository refreshTokenRepository;
 
-	public AuthDto.LoginResponse createTokens(int id, String profileImageUrl, String username) {
+	public AuthDto.LoginResponse createTokens(int userId, String profileImageUrl, String username) {
 		Map<String, Object> claims = new HashMap<>();
 
 		claims.put("username", username);
 		claims.put("profileImageUrl", profileImageUrl);
 
 		// JWT 생성
-		String accessToken = userAuthorizationJwtManager.createAccessToken(id, claims);
+		String accessToken = userAuthorizationJwtManager.createAccessToken(userId, claims);
 
 		// DB에 저장된 리프레시 토큰 조회
-		Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByUserId(id);
+		Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByUserId(userId);
 		String refreshToken;
 
 		if (optionalRefreshToken.isPresent()) {
@@ -40,23 +40,21 @@ public class TokenService {
 				refreshToken = existing.getToken();
 			} else {
 				// 만료됐으면 새로 발급함 (DB 업데이트)
-				refreshToken = userAuthorizationJwtManager.createRefreshToken(id);
+				refreshToken = userAuthorizationJwtManager.createRefreshToken(userId);
 				RefreshToken updated = RefreshToken.builder()
 					.id(existing.getId())
-					.userId(id)
+					.userId(userId)
 					.token(refreshToken)
 					.build();
 				refreshTokenRepository.save(updated);
 			}
 		} else {
 			// 없으면 새로 발급
-			refreshToken = userAuthorizationJwtManager.createRefreshToken(id);
-			RefreshToken created = RefreshToken.builder()
-				.userId(id)
-				.token(refreshToken)
-				.build();
+			refreshToken = userAuthorizationJwtManager.createRefreshToken(userId);
+			RefreshToken created = RefreshToken.builder().userId(userId).token(refreshToken).build();
 			refreshTokenRepository.save(created);
 		}
 		return new AuthDto.LoginResponse(accessToken, refreshToken);
 	}
+
 }

@@ -22,7 +22,7 @@ public class Issue extends BaseEntity {
 	private String title;
 	private String content;
 
-	private IssueState state = IssueState.OPEN;
+	private IssueState state;
 
 	private LocalDateTime closedAt;
 
@@ -31,13 +31,11 @@ public class Issue extends BaseEntity {
 	private Integer milestoneId;
 
 	@Builder
-	private Issue(String title, String content, IssueState state,
-		LocalDateTime closedAt, Integer writerId, Integer milestoneId) {
+	private Issue(String title, String content, Integer writerId, Integer milestoneId) {
 
 		this.title = title;
 		this.content = content;
-		this.state = state != null ? state : IssueState.OPEN; // 생성자에 들어가야하는지? 생성될 때 기본으로 open 아닌지? 이슈 생성 작업 때 고민해보자
-		this.closedAt = closedAt;
+		this.state = IssueState.OPEN;
 		this.writerId = writerId;
 		this.milestoneId = milestoneId;
 	}

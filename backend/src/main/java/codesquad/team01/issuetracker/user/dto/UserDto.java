@@ -37,6 +37,17 @@ public class UserDto {
 		}
 	}
 
+	@Builder
+	public record IssueDetailUserResponse(
+		int id,
+		String username,
+		String profileImageUrl
+	) {
+		public String profileImageUrl() {
+			return profileImageUrl != null ? profileImageUrl : DEFAULT_PROFILE_IMAGE_URL;
+		}
+	}
+
 	// 필터용 사용자 목록 응답 Dto
 	@Builder
 	public record UserFilterListResponse(
@@ -59,6 +70,18 @@ public class UserDto {
 		}
 	}
 
+	// 댓글 작성자 응답 DTO
+	@Builder
+	public record CommentWriterResponse(
+		int id,
+		String username,
+		String profileImageUrl
+	) {
+		public String profileImageUrl() {
+			return profileImageUrl != null ? profileImageUrl : DEFAULT_PROFILE_IMAGE_URL;
+		}
+	}
+
 	/**
 	 * DB 조회용 DTO
 	 */
@@ -67,7 +90,14 @@ public class UserDto {
 	public record IssueAssigneeRow(
 		int issueId,
 		int assigneeId,
+		String assigneeProfileImageUrl
+	) {
+	}
 
+	@Builder
+	public record IssueDetailAssigneeRow(
+		int assigneeId,
+		String assigneeUsername,
 		String assigneeProfileImageUrl
 	) {
 	}
@@ -76,7 +106,6 @@ public class UserDto {
 	@Builder
 	public record UserFilterRow(
 		int id,
-
 		String username,
 		String profileImageUrl
 	) {

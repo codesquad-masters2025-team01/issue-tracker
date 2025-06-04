@@ -24,21 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class UserAuthorizationJwtManager {
 
-	@Value("${JWT_SECRET_KEY}")
-	private String SECRET_KEY;
 	private final SecretKey key;
-
-	@Value("${JWT_ACCESS_TOKEN_LIFETIME}")
 	private final long accessTokenLifetime;
-
-	@Value("${JWT_REFRESH_TOKEN_LIFETIME}")
 	private final long refreshTokenLifetime;
 
 	public UserAuthorizationJwtManager(
 		@Value("${JWT_SECRET_KEY}") String secretKey,
 		@Value("${JWT_ACCESS_TOKEN_LIFETIME}") long accessTokenLifetime,
-		@Value("${JWT_REFRESH_TOKEN_LIFETIME}") long refreshTokenLifetime
-	) {
+		@Value("${JWT_REFRESH_TOKEN_LIFETIME}") long refreshTokenLifetime) {
 		this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 		this.accessTokenLifetime = accessTokenLifetime;
 		this.refreshTokenLifetime = refreshTokenLifetime;
@@ -87,15 +80,15 @@ public class UserAuthorizationJwtManager {
 				.parseSignedClaims(token);
 			return true;
 		} catch (ExpiredJwtException e) {
-			log.info("Refresh token이 만료되었습니다. " + e.getCause() + "에 의해 " + e.getMessage() + "가 발생하였습니다.");
+			log.info("Refresh token이 만료되었습니다. : {}", e.getMessage());
 		} catch (UnsupportedJwtException e) {
-			log.info("지원하지 않는 JWT 형식입니다. " + e.getCause() + "에 의해 " + e.getMessage() + "가 발생하였습니다.");
+			log.info("지원하지 않는 JWT 형식입니다. : {}", e.getMessage());
 		} catch (MalformedJwtException e) {
-			log.info("토큰이 올바르지 않거나 Base64 디코딩이 불가능합니다. " + e.getCause() + "에 의해 " + e.getMessage() + "가 발생하였습니다.");
+			log.info("토큰이 올바르지 않거나 Base64 디코딩이 불가능합니다. : {}", e.getMessage());
 		} catch (SignatureException e) {
-			log.info("서명 검증이 실패하였습니다. " + e.getCause() + "에 의해 " + e.getMessage() + "가 발생하였습니다.");
+			log.info("서명 검증이 실패하였습니다. : {}", e.getMessage());
 		} catch (IllegalArgumentException e) {
-			log.info("메서드에 잘못된 인자가 있습니다. " + e.getCause() + "에 의해 " + e.getMessage() + "가 발생하였습니다.");
+			log.info("메서드에 잘못된 인자가 있습니다. : {}", e.getMessage());
 		}
 		return false;
 	}

@@ -10,4 +10,7 @@ public interface UserQueryRepository {
 
 	List<UserDto.UserFilterRow> findUsersForFilter();
 
+	List<UserDto.IssueDetailAssigneeRow> findAssigneesByIssueId(Integer issueId);
+
+	List<Integer> findValidUserIds(List<Integer> assigneeIds);
 }

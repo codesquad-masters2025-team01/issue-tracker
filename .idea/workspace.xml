@@ -17,8 +17,8 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 7
-}</component>
+    &quot;associatedIndex&quot;: 7
+    }</component>
   <component name="ProjectId" id="2woCImtBmuK1Z4fl5sxzqQrRJCL" />
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
@@ -27,7 +27,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "refactor/#5-count-issues-api",
+    "git-widget-placeholder": "release",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/jaehoonchoi/study/CodeSquad/issue-tracker/issue-tracker",
     "node.js.detected.package.eslint": "true",

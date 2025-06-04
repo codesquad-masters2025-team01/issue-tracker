@@ -1,4 +1,3 @@
--- 외래키 없이 테이블 생성
 -- User 테이블
 CREATE TABLE IF NOT EXISTS `users` (
                                        `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -12,21 +11,6 @@ CREATE TABLE IF NOT EXISTS `users` (
     `auth_provider` VARCHAR(50) NOT NULL DEFAULT 'local',
     `provider_id` varchar(1024),
     `profile_image_url` VARCHAR(1024)
-    );
-
--- File 테이블
-CREATE TABLE IF NOT EXISTS `file` (
-                                      `id` INT AUTO_INCREMENT PRIMARY KEY,
-                                      `url` VARCHAR(1024) NOT NULL,
-    `stored_name` VARCHAR(255) NOT NULL,
-    `original_name` VARCHAR(255) NOT NULL,
-    `file_type` VARCHAR(100) NOT NULL,
-    `size` INT NOT NULL,
-    `usage_type` VARCHAR(50) NOT NULL,
-    `uploaded_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `deleted_at` TIMESTAMP,
-    `comment_id` INT NULL,
-    `issue_id` INT NULL
     );
 
 -- Milestone 테이블
@@ -92,17 +76,14 @@ CREATE TABLE IF NOT EXISTS `issue_label` (
                                              PRIMARY KEY (`issue_id`, `label_id`)
     );
 
--- 외래키 제약조건 추가
-ALTER TABLE `file`
-    ADD CONSTRAINT `fk_file_issue`
-        FOREIGN KEY (`issue_id`) REFERENCES `issue`(`id`),
-    ADD CONSTRAINT `fk_file_comment`
-        FOREIGN KEY (`comment_id`) REFERENCES `comment`(`id`),
-    ADD CONSTRAINT `chk_file_reference`
-        CHECK ((issue_id IS NULL AND comment_id IS NOT NULL) OR
-              (issue_id IS NOT NULL AND comment_id IS NULL) OR
-              (issue_id IS NULL AND comment_id IS NULL));
+-- RefreshToken 테이블
+CREATE TABLE IF NOT EXISTS `refresh_token` (
+                                               `id` INTEGER AUTO_INCREMENT PRIMARY KEY,
+                                               `user_id` INT UNIQUE NOT NULL,
+                                               `token` VARCHAR(1024) NOT NULL
+    );
 
+-- 외래키 제약조건 추가
 ALTER TABLE `issue`
     ADD CONSTRAINT `fk_issue_writer`
         FOREIGN KEY (`writer_id`) REFERENCES `users`(`id`),
@@ -127,8 +108,8 @@ ALTER TABLE `issue_label`
     ADD CONSTRAINT `fk_issue_label_label`
         FOREIGN KEY (`label_id`) REFERENCES `label`(`id`);
 
-CREATE TABLE IF NOT EXISTS `refresh_token` (
-      `id` INTEGER AUTO_INCREMENT PRIMARY KEY,
-      `user_id` INT UNIQUE,
-      `token` VARCHAR(1024) NOT NULL
-);
+-- 이슈 기본 조회 인덱스
+CREATE INDEX idx_issue_deleted_state_created_id ON issue(deleted_at, state, created_at DESC, id DESC);
+
+-- 댓글 기본 조회 인덱스
+CREATE INDEX idx_comment_deleted_issue_created_id ON comment(deleted_at, issue_id, created_at DESC, id DESC);

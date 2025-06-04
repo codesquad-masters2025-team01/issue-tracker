@@ -82,7 +82,7 @@ public class GitHubClient {
 				.orElse(null);
 		}
 
-		log.info("GitHub 사용자 정보 : id={}, login={}, avatarUrl={}, email={}", id, githubId, avatarUrl, email);
+		log.info("GitHub 사용자 정보 : id={}, login={}, avatarUrl={}", id, githubId, avatarUrl);
 		return new AuthDto.GitHubUser(id, githubId, avatarUrl, email);
 	}
 

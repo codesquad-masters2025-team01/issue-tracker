@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import codesquad.team01.issuetracker.issue.domain.IssueState;
 import codesquad.team01.issuetracker.issue.dto.IssueDto;
 import codesquad.team01.issuetracker.label.dto.LabelDto;
+import codesquad.team01.issuetracker.milestone.dto.MilestoneDto;
 import codesquad.team01.issuetracker.user.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +41,62 @@ public class IssueAssembler {
 				.labels(labelsByIssueId.getOrDefault(issue.issueId(), List.of()))
 				.build())
 			.toList();
+	}
+
+	public IssueDto.IssueDetailsResponse assembleSingleIssueDetails(
+		IssueDto.DetailBaseRow issue,
+		List<LabelDto.IssueDetailLabelRow> labelRows,
+		List<UserDto.IssueDetailAssigneeRow> assigneeRows,
+		int commentCount,
+		List<MilestoneDto.MilestoneIssueDetailCountRow> milestoneIssueCountRows
+	) {
+		log.debug("단일 이슈 상세 정보 조합: issueId={}", issue.issueId());
+
+		// 아래의 toCreateResponse처럼 메서드로 처리할지? - 추후 고민
+		List<LabelDto.IssueDetailLabelResponse> labels = labelRows.stream()
+			.map(row -> LabelDto.IssueDetailLabelResponse.builder()
+				.id(row.id())
+				.name(row.name())
+				.color(row.color())
+				.textColor(row.textColor())
+				.build())
+			.toList();
+
+		List<UserDto.IssueDetailUserResponse> assignees = assigneeRows.stream()
+			.map(row -> UserDto.IssueDetailUserResponse.builder()
+				.id(row.assigneeId())
+				.username(row.assigneeUsername())
+				.profileImageUrl(row.assigneeProfileImageUrl())
+				.build()
+			).toList();
+
+		// 마일스톤 정보 생성 (이슈 개수 포함)
+		MilestoneDto.IssueDetailMilestoneResponse milestone = null;
+		if (issue.milestoneId() != null) {
+			Map<IssueState, Integer> countByState = milestoneIssueCountRows.stream()
+				.collect(Collectors.toMap(
+					row -> IssueState.fromStateStr(row.state()),
+					MilestoneDto.MilestoneIssueDetailCountRow::count
+				));
+
+			int openCount = countByState.getOrDefault(IssueState.OPEN, 0);
+			int closedCount = countByState.getOrDefault(IssueState.CLOSED, 0);
+
+			milestone = MilestoneDto.IssueDetailMilestoneResponse.builder()
+				.id(issue.milestoneId())
+				.title(issue.milestoneTitle())
+				.dueDate(issue.milestoneDueDate())
+				.openCount(openCount)
+				.closedCount(closedCount)
+				.build();
+		}
+
+		return IssueDto.SingleDetails.builder()
+			.issue(issue)
+			.labels(labels)
+			.assignees(assignees)
+			.commentCount(commentCount)
+			.build().toCreateResponse(milestone);
 	}
 
 	// 담당자 정보 이슈 id로 그룹화

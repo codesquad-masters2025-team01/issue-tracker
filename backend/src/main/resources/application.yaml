@@ -16,6 +16,21 @@ spring:
       mode: never
       schema-locations: classpath:schema.sql
 
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID}
+        secret-key: ${AWS_SECRET_ACCESS_KEY}
+      region:
+        static: ${AWS_REGION:ap-northeast-2}
+      s3:
+        bucket: ${AWS_S3_BUCKET_NAME}
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 github:
   oauth:
     client-id: ${GITHUB_CLIENT_ID}
@@ -31,3 +46,9 @@ jwt:
   jwt-secret-key: ${JWT_SECRET_KEY}
   jwt-access-token-lifetime: ${JWT_ACCESS_TOKEN_LIFETIME}
   jwt-refresh-token-lifetime: ${JWT_REFRESH_TOKEN_LIFETIME}
+
+image:
+  upload:
+    allowed-extensions: jpg,jpeg,png,gif,webp
+    max-size: 10485760  # 10MB in bytes
+    base-url: https://${AWS_S3_BUCKET_NAME}.s3.${AWS_REGION:ap-northeast-2}.amazonaws.com

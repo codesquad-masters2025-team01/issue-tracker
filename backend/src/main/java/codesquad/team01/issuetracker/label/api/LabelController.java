@@ -3,7 +3,12 @@ package codesquad.team01.issuetracker.label.api;
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,5 +50,21 @@ public class LabelController {
 		return ResponseEntity
 			.created(URI.create("/api/v1/labels" + response.id()))
 			.body(ApiResponse.success(response));
+	}
+
+	@PutMapping("/v1/labels/{id}")
+	public ResponseEntity<ApiResponse<LabelDto.LabelUpdateResponse>> updateLabel(
+		@PathVariable("id") int id,
+		@Valid @RequestBody LabelDto.LabelUpdateRequest request) {
+		LabelDto.LabelUpdateResponse response = labelService.updateLabel(id, request);
+		log.info("레이블 수정 완료: name={}", response.name());
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@DeleteMapping("/v1/labels/{id}")
+	public ResponseEntity<ApiResponse<Void>> deleteLabel(@PathVariable("id") int id) {
+		labelService.deleteLabel(id);
+		log.info("레이블 삭제 완료: id={}", id);
+		return ResponseEntity.ok(ApiResponse.success(null));
 	}
 }

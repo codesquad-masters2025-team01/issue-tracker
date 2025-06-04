@@ -95,7 +95,9 @@ jobs:
 
             # 애플리케이션 중지
             sudo systemctl stop issue-tracker || pkill -f "java.*backend" || true
-
+            
+            chmod -R u+w backend/
+            
             # 백업 생성
             cd ~/issue-tracker
             if [ -f backend/build/libs/backend-0.0.1-SNAPSHOT.jar ]; then
@@ -110,7 +112,7 @@ jobs:
 
             # sudo -E로 환경변수 보존하면서 테스트 및 빌드
             sudo -E ./gradlew clean test
-            sudo -E ./gradlew bootJar
+            sudo -E ./gradlew bootJar -x test
 
             # Systemd 서비스 시작 (서비스 파일의 환경변수 사용)
             sudo systemctl start issue-tracker

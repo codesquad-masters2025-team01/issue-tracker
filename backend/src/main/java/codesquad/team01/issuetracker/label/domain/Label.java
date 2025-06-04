@@ -32,4 +32,11 @@ public class Label extends BaseEntity {
 		this.color = color;
 		this.textColor = textColor;
 	}
+
+	public void update(String name, String description, String color, String textColor) {
+		this.name = name;
+		this.description = description;
+		this.color = color;
+		this.textColor = textColor;
+	}
 }

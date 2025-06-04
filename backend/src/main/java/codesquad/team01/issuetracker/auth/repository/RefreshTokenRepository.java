@@ -8,4 +8,7 @@ import codesquad.team01.issuetracker.auth.domain.RefreshToken;
 
 public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Integer> {
 	Optional<RefreshToken> findByUserId(Integer userId);
+
+	Optional<RefreshToken> findByToken(String token);
+
 }

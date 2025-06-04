@@ -8,4 +8,8 @@ public interface LabelQueryRepository {
 	List<LabelDto.IssueLabelRow> findLabelsByIssueIds(List<Integer> issueIds);
 
 	List<LabelDto.LabelFilterResponse> findLabelsForFilter();
+
+	List<LabelDto.IssueDetailLabelRow> findLabelsByIssueId(Integer issueId);
+
+	List<Integer> findValidLabelIds(List<Integer> labelIds);
 }

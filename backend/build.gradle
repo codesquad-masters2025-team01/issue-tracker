@@ -44,6 +44,10 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 
+    // AWS S3
+    implementation 'io.awspring.cloud:spring-cloud-aws-s3:3.0.3'
+    implementation 'software.amazon.awssdk:s3:2.20.162'
+
     // Spring Security 암호화 (PasswordEncoder 등)
     implementation 'org.springframework.security:spring-security-crypto'
 
