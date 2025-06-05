@@ -271,7 +271,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { issueApi, commentApi } from '@/services/api'
 import { getUserFromToken } from '@/utils/auth'
@@ -284,6 +284,7 @@ import api from '@/services/api'
 const route = useRoute()
 const router = useRouter()
 
+
 // 상태 관리
 const loading = ref(true)
 const issue = ref(null)
@@ -294,6 +295,7 @@ const isLoadingMore = ref(false)
 const hasMore = ref(true)
 const cursor = ref(null)
 const loadMoreTrigger = ref(null)
+let observer = null
 const isToggling = ref(false)
 
 // 댓글 수정 관련
@@ -515,17 +517,37 @@ const loadComments = async (isLoadMore = false) => {
 
 // 무한 스크롤 설정
 const setupInfiniteScroll = () => {
-  const observer = new IntersectionObserver(
+  // 기존 observer가 있으면 정리
+  if (observer) {
+    observer.disconnect()
+  }
+  
+  observer = new IntersectionObserver(
     (entries) => {
-      if (entries[0].isIntersecting && hasMore.value && !isLoadingMore.value) {
+      const entry = entries[0]
+      if (entry.isIntersecting && hasMore.value && !isLoadingMore.value) {
+        console.log('무한스크롤 트리거됨') // 디버깅용
         loadComments(true)
       }
     },
-    { threshold: 0.1 }
+    { 
+      threshold: 0.1,
+      rootMargin: '100px'  // 이 부분도 추가
+    }
   )
 
   if (loadMoreTrigger.value) {
     observer.observe(loadMoreTrigger.value)
+    console.log('무한스크롤 observer 등록됨') // 디버깅용
+  }
+}
+
+// cleanupInfiniteScroll 함수 추가
+const cleanupInfiniteScroll = () => {
+  if (observer && loadMoreTrigger.value) {
+    observer.unobserve(loadMoreTrigger.value)
+    observer.disconnect()
+    observer = null
   }
 }
 
@@ -626,6 +648,11 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+})
+
+// 맨 아래 onMounted 이후에 추가
+onUnmounted(() => {
+  cleanupInfiniteScroll()
 })
 </script>
 
