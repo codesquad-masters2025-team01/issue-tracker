@@ -55,6 +55,14 @@
           >
             {{ isToggling ? '처리 중...' : (issue.state === 'open' ? '이슈 닫기' : '이슈 다시 열기') }}
           </button>
+          <button 
+            type="button"
+            class="btn-delete-issue"
+            @click="deleteIssue"
+            style="margin-left: 8px; background: #d1242f; color: white; border: 1px solid #d1242f; border-radius: 6px; padding: 8px 16px; font-size: 14px; font-weight: 500; cursor: pointer;"
+          >
+            이슈 삭제
+          </button>
         </div>
       </div>
 
@@ -141,6 +149,35 @@
 
       <!-- 댓글 섹션 -->
       <div class="comments-section">
+        <div class="new-comment">
+          <div class="comment-form">
+            <div class="comment-author">
+              <img 
+                :src="currentUser?.profileImageUrl || 'https://issue-tracker-team01-bucket.s3.ap-northeast-2.amazonaws.com/images/2025/06/05/72a070f0-2a89-4f95-8fc1-2b9fc0b69b0f.jpeg'" 
+                :alt="currentUser?.username"
+                class="author-avatar"
+              />
+            </div>
+            <div class="comment-input">
+              <MarkdownEditor
+                v-model="newComment"
+                placeholder="댓글을 마크다운으로 작성해주세요...\n\n**기본 사용법:**\n- **굵은 글씨**: **텍스트**\n- *기울임 글씨*: *텍스트*  \n- 링크: [텍스트](URL)\n- 이미지: 드래그하거나 붙여넣기, 또는 ![이미지](URL)\n- 코드: \`인라인 코드\` 또는 \`\`\`언어명\n- 목록: - 또는 1.\n\n이미지는 드래그 앤 드롭, 붙여넣기로 업로드할 수 있습니다."
+                :rows="6"
+              />
+              <div class="comment-actions">
+                <button 
+                  type="button"
+                  class="btn-submit"
+                  @click="submitComment"
+                  :disabled="!newComment.trim() || isSubmittingComment"
+                >
+                  {{ isSubmittingComment ? '작성 중...' : '댓글 작성' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <h3 class="comments-title">
           댓글 {{ comments.length }}개
         </h3>
@@ -224,46 +261,6 @@
             댓글을 더 불러오는 중...
           </div>
         </div>
-
-        <!-- 댓글 작성 폼 -->
-        <div class="new-comment">
-          <div class="comment-form">
-            <div class="comment-author">
-              <img 
-                :src="currentUser?.profileImageUrl || '/images/default-profile.png'" 
-                :alt="currentUser?.username"
-                class="author-avatar"
-              />
-            </div>
-            <div class="comment-input">
-              <MarkdownEditor
-                v-model="newComment"
-                placeholder="댓글을 마크다운으로 작성해주세요...
-
-**기본 사용법:**
-- **굵은 글씨**: **텍스트**
-- *기울임 글씨*: *텍스트*  
-- 링크: [텍스트](URL)
-- 이미지: 드래그하거나 붙여넣기, 또는 ![이미지](URL)
-- 코드: \`인라인 코드\` 또는 \`\`\`언어명
-- 목록: - 또는 1.
-
-이미지는 드래그 앤 드롭, 붙여넣기로 업로드할 수 있습니다."
-                :rows="6"
-              />
-              <div class="comment-actions">
-                <button 
-                  type="button"
-                  class="btn-submit"
-                  @click="submitComment"
-                  :disabled="!newComment.trim() || isSubmittingComment"
-                >
-                  {{ isSubmittingComment ? '작성 중...' : '댓글 작성' }}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -282,6 +279,7 @@ import MarkdownEditor from '@/components/MarkdownEditor.vue'
 import { marked } from 'marked'
 import DOMPurify from 'dompurify'
 import hljs from 'highlight.js'
+import api from '@/services/api'
 
 const route = useRoute()
 const router = useRouter()
@@ -602,11 +600,29 @@ const saveContent = async () => {
   }
 }
 
+// 이슈 삭제
+const deleteIssue = async () => {
+  if (!confirm('정말로 이 이슈를 삭제하시겠습니까?')) return;
+  try {
+    await api.delete(`/issues/${issue.value.id}`);
+    alert('이슈가 삭제되었습니다.');
+    router.push('/issues');
+  } catch (error) {
+    alert('이슈 삭제에 실패했습니다.');
+    console.error('이슈 삭제 실패:', error);
+  }
+}
+
 // 초기 데이터 로드
 onMounted(async () => {
   try {
     await Promise.all([loadIssue(), loadComments()])
     
+    // 초기 로드 후 댓글 수가 적고 더 가져올 댓글이 있다면 무한 스크롤 트리거
+    if (hasMore.value && comments.value.length < 20) { // 임의의 작은 수로 설정, 필요시 조정
+       loadComments(true);
+    }
+
     nextTick(() => {
       setupInfiniteScroll()
     })
