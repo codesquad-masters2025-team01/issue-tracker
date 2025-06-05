@@ -147,9 +147,21 @@ public class IssueQueryBuilder {
 	public IssueCountQueryInfo buildCountQuery(IssueDto.CountQueryParams queryParams) {
 		StringBuilder baseQuery = new StringBuilder("""
 			SELECT 
-				i.state,
-				COUNT(*) as count
+			    i.state,
+			    COUNT(*) as count
 			FROM issue i
+			""");
+
+		// filter=commented인 경우 comment 테이블과 조인 추가
+		if ("commented".equals(queryParams.filter()) && queryParams.commentedUserId() != null) {
+			baseQuery.append("""
+				JOIN comment c ON i.id = c.issue_id 
+				AND c.writer_id = :commentedUserId 
+				AND c.deleted_at IS NULL
+				""");
+		}
+
+		baseQuery.append("""
 			WHERE i.deleted_at IS NULL
 			""");
 
@@ -159,13 +171,36 @@ public class IssueQueryBuilder {
 		addCommonFilterConditions(queryParams.writerId(), queryParams.milestoneId(), queryParams.labelIds(),
 			queryParams.assigneeIds(), conditions, params);
 
-		// AND
+		// commented 필터 처리
+		if ("commented".equals(queryParams.filter()) && queryParams.commentedUserId() != null) {
+			params.addValue("commentedUserId", queryParams.commentedUserId());
+		}
+
+		// AND 조건 연결
 		if (!conditions.isEmpty()) {
 			baseQuery.append(" AND ").append(String.join(" AND ", conditions));
 		}
 
-		// GROUP BY
-		baseQuery.append(" GROUP BY i.state");
+		// filter=commented인 경우 중복 제거를 위해 서브쿼리 사용
+		if ("commented".equals(queryParams.filter()) && queryParams.commentedUserId() != null) {
+			// 기존 쿼리를 서브쿼리로 감싸기
+			String originalQuery = baseQuery.toString();
+			baseQuery = new StringBuilder("""
+				SELECT 
+				    sub.state,
+				    COUNT(*) as count
+				FROM (
+				    SELECT DISTINCT i.id, i.state
+				""");
+			baseQuery.append(originalQuery.substring(originalQuery.indexOf("FROM")));
+			baseQuery.append("""
+				) sub
+				GROUP BY sub.state
+				""");
+		} else {
+			// GROUP BY 추가
+			baseQuery.append(" GROUP BY i.state");
+		}
 
 		return IssueCountQueryInfo.builder()
 			.query(baseQuery.toString())

@@ -50,13 +50,14 @@ public class IssueController {
 
 	@GetMapping("/v1/issues/count")
 	public ResponseEntity<ApiResponse<IssueDto.CountResponse>> getIssuesCount(
-		@Valid IssueDto.CountQueryRequest request) {
+		@Valid IssueDto.CountQueryRequest request,
+		@CurrentUserId Integer currentUserId) {
 
-		log.info(request.toString());
+		log.info("이슈 개수 조회 요청: {}", request);
 
-		IssueDto.CountResponse response = issueService.countIssues(request);
+		IssueDto.CountResponse response = issueService.countIssues(request, currentUserId);
 
-		log.info(response.toString());
+		log.info("이슈 개수 조회 응답: {}", response);
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 

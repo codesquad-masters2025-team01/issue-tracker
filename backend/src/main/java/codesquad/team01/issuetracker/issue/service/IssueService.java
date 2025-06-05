@@ -115,16 +115,17 @@ public class IssueService {
 			.build();
 	}
 
-	public IssueDto.CountResponse countIssues(IssueDto.CountQueryRequest request) {
+	public IssueDto.CountResponse countIssues(IssueDto.CountQueryRequest request, Integer currentUserId) {
 
-		log.debug(request.toString());
+		log.debug("이슈 개수 조회 요청: {}", request);
 
-		IssueDto.CountQueryParams queryParams = IssueDto.CountQueryParams.from(request);
+		IssueDto.CountQueryRequest processedRequest = applyFilterForCount(request, currentUserId);
 
-		IssueDto.CountResponse response =
-			issueRepository.countIssuesWithFilters(queryParams);
+		IssueDto.CountQueryParams queryParams = IssueDto.CountQueryParams.from(processedRequest);
 
-		log.debug(response.toString());
+		IssueDto.CountResponse response = issueRepository.countIssuesWithFilters(queryParams);
+
+		log.debug("이슈 개수 조회 응답: {}", response);
 
 		return response;
 	}
@@ -356,6 +357,37 @@ public class IssueService {
 		IssueFilter filter = IssueFilter.fromFilterStr(request.filter());
 
 		return filter == null ? request : filter.applyFilter(request, currentUserId);
+	}
+
+	private IssueDto.CountQueryRequest applyFilterForCount(IssueDto.CountQueryRequest request, Integer currentUserId) {
+		IssueFilter filter = IssueFilter.fromFilterStr(request.filter());
+
+		if (filter == null) {
+			return request; // filter가 없으면 원래 요청 그대로
+		}
+
+		// ListQueryRequest로 변환해서 filter 적용 후 다시 CountQueryRequest로 변환
+		IssueDto.ListQueryRequest tempListRequest = IssueDto.ListQueryRequest.builder()
+			.state("open") // 임시 값 (count에서는 실제로 사용되지 않음)
+			.filter(request.filter())
+			.writerId(request.writerId())
+			.milestoneId(request.milestoneId())
+			.labelIds(request.labelIds())
+			.assigneeIds(request.assigneeIds())
+			.commentedUserId(request.commentedUserId())
+			.build();
+
+		IssueDto.ListQueryRequest processedListRequest = filter.applyFilter(tempListRequest, currentUserId);
+
+		// 다시 CountQueryRequest로 변환
+		return IssueDto.CountQueryRequest.builder()
+			.filter(processedListRequest.filter())
+			.writerId(processedListRequest.writerId())
+			.milestoneId(processedListRequest.milestoneId())
+			.labelIds(processedListRequest.labelIds())
+			.assigneeIds(processedListRequest.assigneeIds())
+			.commentedUserId(processedListRequest.commentedUserId())
+			.build();
 	}
 
 }

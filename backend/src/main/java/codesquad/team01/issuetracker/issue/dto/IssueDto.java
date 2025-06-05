@@ -32,6 +32,9 @@ public class IssueDto {
 	// 열린/닫힌 이슈 개수 조회 필터 쿼리 요청 DTO
 	@Builder
 	public record CountQueryRequest(
+		@Pattern(regexp = "^(created|assigned|commented)$", message = "filter는 'created', 'assigned', 'commented'만 가능합니다")
+		String filter,
+
 		@Positive(message = "작성자 ID는 양수여야 합니다")
 		Integer writerId,
 
@@ -40,15 +43,21 @@ public class IssueDto {
 
 		List<@Positive(message = "레이블 ID는 양수여야 합니다") Integer> labelIds,
 
-		List<@Positive(message = "담당자 ID는 양수여야 합니다") Integer> assigneeIds
+		List<@Positive(message = "담당자 ID는 양수여야 합니다") Integer> assigneeIds,
+
+		@Positive(message = "댓글 작성자 ID는 양수여야 합니다")
+		Integer commentedUserId
+
 	) {
 		@Override
 		public String toString() {
 			return "CountQueryRequest{" +
+				"filter='" + filter + '\'' +
 				"writerId=" + writerId +
 				", milestoneId=" + milestoneId +
 				", labelIds=" + labelIds +
 				", assigneeIds=" + assigneeIds +
+				", commentedUserId=" + commentedUserId +
 				'}';
 		}
 	}
@@ -539,17 +548,21 @@ public class IssueDto {
 
 	// 이슈 개수 조회용 DTO
 	public record CountQueryParams(
+		String filter,
 		Integer writerId,
 		Integer milestoneId,
 		List<Integer> labelIds,
-		List<Integer> assigneeIds
+		List<Integer> assigneeIds,
+		Integer commentedUserId
 	) {
 		public static CountQueryParams from(CountQueryRequest request) {
 			return new CountQueryParams(
+				request.filter(),
 				request.writerId(),
 				request.milestoneId(),
 				request.labelIds() != null ? request.labelIds() : List.of(),
-				request.assigneeIds() != null ? request.assigneeIds() : List.of()
+				request.assigneeIds() != null ? request.assigneeIds() : List.of(),
+				request.commentedUserId()
 			);
 		}
 	}
