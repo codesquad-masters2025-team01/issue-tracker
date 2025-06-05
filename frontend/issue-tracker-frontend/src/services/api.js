@@ -75,8 +75,8 @@ export const issueApi = {
   },
   
   // 이슈 개수 조회
-  getIssueCount() {
-    return api.get('/issues/count')
+  getIssueCount(params = {}, options = {}) {
+    return api.get('/issues/count', { ...options, params })
   },
   
   // 이슈 상세 조회
