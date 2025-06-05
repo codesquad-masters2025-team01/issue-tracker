@@ -216,16 +216,16 @@ export default {
     
     // 날짜 포맷팅
     const formatDate = (dateString) => {
-      const date = new Date(dateString)
-      date.setHours(date.getHours() + 9)
-      const now = new Date()
-      const diffTime = Math.abs(now - date)
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      const utc = new Date(dateString);
+      const date = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
+      const now = new Date();
+      const diffTime = Math.abs(now - date);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       
-      if (diffDays === 1) return '1일 전'
-      if (diffDays < 7) return `${diffDays}일 전`
-      if (diffDays < 30) return `${Math.ceil(diffDays / 7)}주 전`
-      return `${Math.ceil(diffDays / 30)}달 전`
+      if (diffDays === 1) return '1일 전';
+      if (diffDays < 7) return `${diffDays}일 전`;
+      if (diffDays < 30) return `${Math.ceil(diffDays / 7)}주 전`;
+      return `${Math.ceil(diffDays / 30)}달 전`;
     }
     
     // 이슈 개수 포맷팅 (999+ 처리)

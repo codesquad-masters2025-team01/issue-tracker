@@ -365,15 +365,15 @@ const renderMarkdown = (content) => {
 
 // 날짜 포맷팅
 const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  date.setHours(date.getHours() + 9)
-  return date.toLocaleDateString('ko-KR', {
+  const utc = new Date(dateString);
+  const kst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
+  return kst.toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
-  })
+  });
 }
 
 // 이슈 상태 토글
