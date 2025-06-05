@@ -617,11 +617,6 @@ const deleteIssue = async () => {
 onMounted(async () => {
   try {
     await Promise.all([loadIssue(), loadComments()])
-    
-    // 초기 로드 후 댓글 수가 적고 더 가져올 댓글이 있다면 무한 스크롤 트리거
-    if (hasMore.value && comments.value.length < 20) { // 임의의 작은 수로 설정, 필요시 조정
-       loadComments(true);
-    }
 
     nextTick(() => {
       setupInfiniteScroll()
