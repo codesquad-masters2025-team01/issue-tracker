@@ -217,6 +217,7 @@ export default {
     // 날짜 포맷팅
     const formatDate = (dateString) => {
       const date = new Date(dateString)
+      date.setHours(date.getHours() + 9)
       const now = new Date()
       const diffTime = Math.abs(now - date)
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
