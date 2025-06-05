@@ -1,5 +1,6 @@
 // src/services/api.js
 import axios from 'axios'
+import qs from 'qs'
 
 // Nginx 리버스 프록시 환경에서는 모든 요청이 같은 도메인으로 감
 // 로컬 개발환경에서만 프록시 사용
@@ -12,6 +13,7 @@ console.log('API 환경:', isDevelopment ? '개발(로컬)' : '운영(Nginx 프�
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 10000,
+  paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
 })
 
 // 요청 인터셉터 - 토큰 자동 첨부
