@@ -239,7 +239,8 @@ export default {
           writerId: filters.writer || undefined,
           milestoneId: filters.milestone || undefined,
           labelIds: filters.labels.length > 0 ? filters.labels : undefined,
-          assigneeIds: filters.assignees.length > 0 ? filters.assignees : undefined
+          assigneeIds: filters.assignees.length > 0 ? filters.assignees : undefined,
+          filter: filters.filter || undefined
         }
         const response = await issueApi.getIssueCount(params, {
           paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
