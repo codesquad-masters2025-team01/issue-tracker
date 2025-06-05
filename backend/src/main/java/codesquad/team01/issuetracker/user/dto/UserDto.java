@@ -9,7 +9,7 @@ public class UserDto {
 	private UserDto() {
 	}
 
-	private static final String DEFAULT_PROFILE_IMAGE_URL = "/images/default-profile.png";
+	private static final String DEFAULT_PROFILE_IMAGE_URL = "https://issue-tracker-team01-bucket.s3.ap-northeast-2.amazonaws.com/images/2025/06/05/72a070f0-2a89-4f95-8fc1-2b9fc0b69b0f.jpeg";
 
 	/**
 	 * 응답 DTO
