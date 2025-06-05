@@ -531,7 +531,8 @@ const setupInfiniteScroll = () => {
           console.log('무한스크롤 트리거됨') // 디버깅용
           loadComments(true)
         }
-      },\n      {
+      },
+      {
         threshold: 0.1,
         rootMargin: '100px' // 이 부분도 추가
       }
