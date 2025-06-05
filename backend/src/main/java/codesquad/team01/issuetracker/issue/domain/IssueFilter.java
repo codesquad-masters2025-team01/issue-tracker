@@ -41,8 +41,15 @@ public enum IssueFilter {
 	COMMENTED("commented") {
 		@Override
 		public IssueDto.ListQueryRequest applyFilter(IssueDto.ListQueryRequest request, Integer currentUserId) {
-			//todo: 댓글 기능 구현 후 처리
-			return request;
+			return IssueDto.ListQueryRequest.builder()
+				.state(request.state())
+				.filter(request.filter())
+				.writerId(request.writerId())
+				.milestoneId(request.milestoneId())
+				.labelIds(request.labelIds())
+				.assigneeIds(request.assigneeIds())
+				.commentedUserId(currentUserId)
+				.build();
 		}
 	};
 
