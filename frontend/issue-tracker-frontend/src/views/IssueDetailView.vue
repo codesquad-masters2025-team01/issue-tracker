@@ -1044,11 +1044,12 @@ onMounted(async () => {
 
 .markdown-content :deep(img) {
   max-width: 100%;
+  max-height: 160px;
   height: auto;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin: 8px 0;
   display: block;
+  margin: 8px 0;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .markdown-content :deep(code) {
@@ -1227,11 +1228,11 @@ onMounted(async () => {
 
 .markdown-content img {
   max-width: 100%;
-  max-height: 320px;
+  max-height: 160px;
   height: auto;
   display: block;
-  margin: 16px 0;
-  border-radius: 8px;
+  margin: 8px 0;
+  border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 </style>
