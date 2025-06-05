@@ -242,7 +242,7 @@ export default {
           assigneeIds: filters.assignees.length > 0 ? filters.assignees : undefined
         }
         const response = await issueApi.getIssueCount(params, {
-          paramsSerializer: params => qs.stringify(params, { arrayFormat: 'brackets' })
+          paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
         })
         counts.open = response.data.data.open
         counts.closed = response.data.data.closed
@@ -269,7 +269,7 @@ export default {
           params.search = searchQuery.value.trim()
         }
         const response = await issueApi.getIssues(params, {
-          paramsSerializer: params => qs.stringify(params, { arrayFormat: 'brackets' })
+          paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
         })
         const data = response.data.data
         if (reset) {
