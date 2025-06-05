@@ -271,7 +271,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, nextTick, onUnmounted } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { issueApi, commentApi } from '@/services/api'
 import { getUserFromToken } from '@/utils/auth'
@@ -521,31 +521,32 @@ const setupInfiniteScroll = () => {
   if (observer) {
     observer.disconnect()
   }
-  
-  observer = new IntersectionObserver(
-    (entries) => {
-      const entry = entries[0]
-      if (entry.isIntersecting && hasMore.value && !isLoadingMore.value) {
-        console.log('무한스크롤 트리거됨') // 디버깅용
-        loadComments(true)
-      }
-    },
-    { 
-      threshold: 0.1,
-      rootMargin: '100px'  // 이 부분도 추가
-    }
-  )
 
+  // loadMoreTrigger.value가 유효할 때만 observer 설정
   if (loadMoreTrigger.value) {
+    observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0]
+        if (entry.isIntersecting && hasMore.value && !isLoadingMore.value) {
+          console.log('무한스크롤 트리거됨') // 디버깅용
+          loadComments(true)
+        }
+      },\n      {
+        threshold: 0.1,
+        rootMargin: '100px' // 이 부분도 추가
+      }
+    )
+
     observer.observe(loadMoreTrigger.value)
     console.log('무한스크롤 observer 등록됨') // 디버깅용
+  } else {
+    console.log('loadMoreTrigger 요소가 아직 준비되지 않음');
   }
 }
 
-// cleanupInfiniteScroll 함수 추가
+// cleanupInfiniteScroll 함수
 const cleanupInfiniteScroll = () => {
-  if (observer && loadMoreTrigger.value) {
-    observer.unobserve(loadMoreTrigger.value)
+  if (observer) {
     observer.disconnect()
     observer = null
   }
@@ -635,14 +636,16 @@ const deleteIssue = async () => {
   }
 }
 
-// 초기 데이터 로드
+// onMounted 수정 (setupInfiniteScroll 직접 호출 대신 watch에 의존)
 onMounted(async () => {
   try {
     await Promise.all([loadIssue(), loadComments()])
 
-    nextTick(() => {
-      setupInfiniteScroll()
-    })
+    // DOM 업데이트 후 무한 스크롤 설정 (watch가 처리)
+    // nextTick(() => {
+    //   setupInfiniteScroll()
+    // })
+
   } catch (error) {
     console.error('초기 데이터 로드 실패:', error)
   } finally {
@@ -650,7 +653,15 @@ onMounted(async () => {
   }
 })
 
-// 맨 아래 onMounted 이후에 추가
+// watch loadMoreTrigger ref
+watch(loadMoreTrigger, (newValue) => {
+  if (newValue) {
+    console.log('loadMoreTrigger ref 감지됨, 무한스크롤 설정 시도');
+    setupInfiniteScroll();
+  }
+});
+
+// 맨 아래 onUnmounted 추가
 onUnmounted(() => {
   cleanupInfiniteScroll()
 })
