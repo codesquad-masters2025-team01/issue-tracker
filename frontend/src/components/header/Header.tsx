@@ -1,7 +1,7 @@
 import Logo from "./Logo";
 import ThemeToggleBtn from "../theme/ThemeToggleBtn";
-import Profile from "./Profile";
 import styled from "@emotion/styled";
+import ProfileMenu from "./ProfileMenu";
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -18,7 +18,7 @@ export default function Header() {
     <HeaderWrapper>
       <Logo />
       <ThemeToggleBtn />
-      <Profile />
+      <ProfileMenu />
     </HeaderWrapper>
   );
 }
