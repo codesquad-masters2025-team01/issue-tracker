@@ -48,7 +48,8 @@ public class AuthController {
 
 	// Redirect(Callback) endpoint
 	@GetMapping("/v1/oauth/callback")
-	public AuthDto.LoginResponse githubCallback(@RequestParam("code") String code, @RequestParam("state") String state,
+	public ApiResponse<AuthDto.LoginResponse> githubCallback(@RequestParam("code") String code,
+		@RequestParam("state") String state,
 		HttpSession session) {
 		String savedState = (String)session.getAttribute("oauth_state");
 		if (savedState == null || !savedState.equals(state)) {
@@ -61,7 +62,7 @@ public class AuthController {
 		AuthDto.LoginResponse tokens = tokenService.createTokens(oauthUser.getId(), oauthUser.getProfileImageUrl(),
 			oauthUser.getUsername());
 
-		return tokens;
+		return ApiResponse.success(tokens);
 	}
 
 	//자체 로그인
