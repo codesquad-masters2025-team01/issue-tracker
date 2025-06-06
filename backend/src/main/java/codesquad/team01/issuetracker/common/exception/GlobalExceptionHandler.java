@@ -82,15 +82,28 @@ public class GlobalExceptionHandler {
 	// 아이디가 존재하지 않는 경우
 	@ExceptionHandler(UserNotFoundException.class)
 	public ResponseEntity<ApiResponse<?>> handleUserNotFound(UserNotFoundException e) {
-		log.error("UserNotFoundException : {}", e.getMessage());
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("존재하지 않는 ID 입니다"));
+		Integer userId = e.getUserId();
+		return ResponseEntity
+			.status(HttpStatus.NOT_FOUND)
+			.body(ApiResponse.error(userId + "는 존재하지 않는 사용자 입니다"));
 	}
 
 	// 패스워드가 틀린 경우
 	@ExceptionHandler(InvalidPasswordException.class)
 	public ResponseEntity<ApiResponse<?>> handleInvalidPassword(InvalidPasswordException e) {
-		log.error("InvalidPasswordException : {}", e.getMessage());
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("비밀번호가 일치하지 않습니다"));
+		String wrongPassword = e.getWrongPassword();
+		return ResponseEntity
+			.badRequest()
+			.body(ApiResponse.error("입력한" + wrongPassword + "와 비밀번호가 일치하지 않습니다"));
+	}
+
+	//자체 로그인 시 loginId가 존재하지 않는 경우
+	@ExceptionHandler(UserLoginIdNotFoundException.class)
+	public ResponseEntity<ApiResponse<?>> handleLoginNotFound(UserLoginIdNotFoundException e) {
+		String loginId = e.getLoginId();
+		return ResponseEntity
+			.badRequest()
+			.body(ApiResponse.error(loginId + "는 존재하지 않는 loginId 입니다"));
 	}
 
 	// 이슈 생성 실패 에러

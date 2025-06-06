@@ -54,7 +54,7 @@ public class JwtAccessTokenAuthenticationFilter extends GenericFilterBean {
 
 		Integer userId = Integer.valueOf(claims.getSubject());
 
-		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
 
 		chain.doFilter(request, response);
 

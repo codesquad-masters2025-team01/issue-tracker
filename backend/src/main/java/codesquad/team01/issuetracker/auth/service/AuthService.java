@@ -9,7 +9,7 @@ import codesquad.team01.issuetracker.auth.dto.AuthDto;
 import codesquad.team01.issuetracker.auth.repository.RefreshTokenRepository;
 import codesquad.team01.issuetracker.common.exception.InvalidPasswordException;
 import codesquad.team01.issuetracker.common.exception.TokenNotFoundException;
-import codesquad.team01.issuetracker.common.exception.UserNotFoundException;
+import codesquad.team01.issuetracker.common.exception.UserLoginIdNotFoundException;
 import codesquad.team01.issuetracker.user.domain.User;
 import codesquad.team01.issuetracker.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +55,10 @@ public class AuthService {
 	}
 
 	public User authenticateUser(String loginId, String password) {
-		User user = userRepository.findByLoginId(loginId).orElseThrow(UserNotFoundException::new);
+		User user = userRepository.findByLoginId(loginId)
+			.orElseThrow(() -> new UserLoginIdNotFoundException(loginId));
 		if (!passwordEncoder.matches(password, user.getPassword())) {
-			throw new InvalidPasswordException();
+			throw new InvalidPasswordException(password);
 		}
 		return user;
 	}
