@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import codesquad.team01.issuetracker.auth.domain.RefreshToken;
 import codesquad.team01.issuetracker.auth.dto.AuthDto;
 import codesquad.team01.issuetracker.auth.repository.RefreshTokenRepository;
-import codesquad.team01.issuetracker.auth.util.JwtRequestTokenExtractor;
+import codesquad.team01.issuetracker.auth.util.JwtAccessTokenExtractor;
 import codesquad.team01.issuetracker.auth.util.UserAuthorizationJwtManager;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,7 +61,7 @@ public class TokenService {
 	}
 
 	public Map<String, String> getClaims(HttpServletRequest request) {
-		String token = JwtRequestTokenExtractor.extractJwtRequestToken(request);
+		String token = JwtAccessTokenExtractor.extractJwtAccessToken(request);
 		Claims claims = userAuthorizationJwtManager.parseClaims(token);
 		String username = claims.get("username", String.class);
 		String profileImageUrl = claims.get("profileImageUrl", String.class);

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.springframework.web.filter.GenericFilterBean;
 
-import codesquad.team01.issuetracker.auth.util.JwtRequestTokenExtractor;
+import codesquad.team01.issuetracker.auth.util.JwtAccessTokenExtractor;
 import codesquad.team01.issuetracker.auth.util.UserAuthorizationJwtManager;
 import codesquad.team01.issuetracker.common.exception.UserNotFoundException;
 import codesquad.team01.issuetracker.user.domain.User;
@@ -48,7 +48,7 @@ public class JwtAccessTokenAuthenticationFilter extends GenericFilterBean {
 			return;
 		}
 
-		String token = JwtRequestTokenExtractor.extractJwtRequestToken(request);
+		String token = JwtAccessTokenExtractor.extractJwtAccessToken(request);
 
 		Claims claims = jwtManager.parseClaims(token);
 
