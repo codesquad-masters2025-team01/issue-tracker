@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class AuthController {
 
 	private final AuthService authService;
@@ -77,10 +79,10 @@ public class AuthController {
 	// 인증한 사용자 username, profileImageUrl
 	@GetMapping("/v1/auth/me")
 	public ApiResponse<?> getUsernameAndProfileImage(HttpServletRequest request) {
-		String username = (String)request.getAttribute("username");
-		String profileImage = (String)request.getAttribute("profileImageUrl");
 
-		return ApiResponse.success(Map.of("username", username, "profileImage", profileImage));
+		Map<String, String> userInfo = tokenService.getClaims(request);
+
+		return ApiResponse.success(userInfo);
 	}
 
 	//로그아웃

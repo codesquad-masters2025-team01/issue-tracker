@@ -27,15 +27,16 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 	private final UserRepository userRepository;
 
 	@Override
-	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-		throws IOException, ServletException {
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws
+		IOException,
+		ServletException {
 		HttpServletRequest request = (HttpServletRequest)req;
 		HttpServletResponse response = (HttpServletResponse)res;
 
 		String path = request.getRequestURI();
 		//필터를 거치지 않을 경로
-		if (path.equals("/api/v1/auth/login") || path.startsWith("/api/v1/oauth")
-			|| path.equals("/api/v1/auth/signup")) {
+		if (path.equals("/api/v1/auth/login") || path.startsWith("/api/v1/oauth") || path.equals(
+			"/api/v1/auth/signup")) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -48,21 +49,14 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 		}
 
 		String token = JwtRequestTokenExtractor.extractJwtRequestToken(request);
-		log.info("Access Token:{}", token);
 
 		Claims claims = jwtManager.parseClaims(token);
 
 		Integer userId = Integer.valueOf(claims.getSubject());
-		String username = claims.get("username", String.class);
-		String profileImageUrl = claims.get("profileImageUrl", String.class);
 
-		User user = userRepository.findById(userId)
-			.orElseThrow(UserNotFoundException::new);
-
-		request.setAttribute("authenticatedUser", user);
-		request.setAttribute("username", username);
-		request.setAttribute("profileImageUrl", profileImageUrl);
+		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
 		chain.doFilter(request, response);
+
 	}
 }
