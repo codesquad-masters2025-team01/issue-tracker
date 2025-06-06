@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import codesquad.team01.issuetracker.auth.filter.JwtAuthenticationFilter;
+import codesquad.team01.issuetracker.auth.filter.JwtAccessTokenAuthenticationFilter;
 import codesquad.team01.issuetracker.auth.filter.JwtExceptionFilter;
 import codesquad.team01.issuetracker.auth.util.UserAuthorizationJwtManager;
 import codesquad.team01.issuetracker.user.repository.UserRepository;
@@ -24,11 +24,11 @@ public class FilterConfig {
 	}
 
 	@Bean
-	public FilterRegistrationBean<JwtAuthenticationFilter> jwtAuthenticationFilter(
+	public FilterRegistrationBean<JwtAccessTokenAuthenticationFilter> jwtAuthenticationFilter(
 		UserAuthorizationJwtManager jwtManager,
 		UserRepository userRepository) {
-		var bean = new FilterRegistrationBean<JwtAuthenticationFilter>();
-		bean.setFilter(new JwtAuthenticationFilter(jwtManager, userRepository));
+		var bean = new FilterRegistrationBean<JwtAccessTokenAuthenticationFilter>();
+		bean.setFilter(new JwtAccessTokenAuthenticationFilter(jwtManager, userRepository));
 		bean.addUrlPatterns("/api/*"); // -> /api/으로 시작하는 경로만 필터 적용
 		bean.setOrder(2);                   // 예외 필터 다음으로 실행
 		return bean;
