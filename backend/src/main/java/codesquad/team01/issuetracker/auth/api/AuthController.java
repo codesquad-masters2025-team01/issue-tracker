@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import codesquad.team01.issuetracker.auth.dto.AuthDto;
 import codesquad.team01.issuetracker.auth.service.AuthService;
@@ -48,8 +49,9 @@ public class AuthController {
 
 	// Redirect(Callback) endpoint
 	@GetMapping("/v1/oauth/callback")
-	public AuthDto.LoginResponse githubCallback(@RequestParam("code") String code, @RequestParam("state") String state,
-		HttpSession session) {
+	public void githubCallback(HttpServletResponse response, @RequestParam("code") String code,
+		@RequestParam("state") String state,
+		HttpSession session) throws IOException {
 		String savedState = (String)session.getAttribute("oauth_state");
 		if (savedState == null || !savedState.equals(state)) {
 			throw new IllegalStateException("유효하지 않은 state");
@@ -61,7 +63,15 @@ public class AuthController {
 		AuthDto.LoginResponse tokens = tokenService.createTokens(oauthUser.getId(), oauthUser.getProfileImageUrl(),
 			oauthUser.getUsername());
 
-		return tokens;
+		String frontendBase = "http://localhost:3000/oauth/callback";
+		URI redirectUri = UriComponentsBuilder
+			.fromUriString(frontendBase)
+			.queryParam("accessToken", tokens.accessToken())
+			.queryParam("refreshToken", tokens.refreshToken())
+			.build()
+			.toUri();
+
+		response.sendRedirect(redirectUri.toString());
 	}
 
 	//자체 로그인

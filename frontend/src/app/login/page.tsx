@@ -120,8 +120,8 @@ export default function LoginPage() {
 
   // Oauth 관련 상태와 함수
   const handleGitHubLogin = () => {
-    // window.location.href = "http://localhost:8080/api/v1/oauth/github/login";
-    window.location.href = "/api/v1/oauth/github/login";
+    window.location.href = "http://localhost:8080/api/v1/oauth/github/login";
+    // window.location.href = "/api/v1/oauth/github/login";
   };
 
   // 일반 로그인 관련 상태와 함수
